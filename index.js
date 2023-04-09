@@ -36,6 +36,12 @@ app.get("/",(request,response) => {
 })
 
 
+app.get("/info",(requests,response) => {
+    response.send(`<p>Phonebook has info for ${phonebook.length} people</p>
+    <p>${new Date()}</p>`);
+})
+
+
 
 const PORT = 3001;
 app.listen(PORT,() => {
