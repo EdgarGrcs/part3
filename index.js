@@ -41,6 +41,24 @@ app.get("/info",(requests,response) => {
     <p>${new Date()}</p>`);
 })
 
+app.get("/api/persons/:id",(request,response) => {
+    const id = Number(request.params.id);
+    const book = phonebook.find(book => book.id === id);
+
+    if (book){
+        response.json(book);
+    } else {
+        response.status(404).end();
+    }
+})
+
+app.delete("/api/persons/:id",(request,response) => {
+    const id = Number(request.params.id);
+    phonebook = phonebook.filter(book => book.id !== id);
+
+    response.status(204).end();
+})
+
 
 
 const PORT = 3001;
