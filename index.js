@@ -4,7 +4,7 @@ const app = express();
 
 
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let phonebook = 
 [
@@ -99,6 +99,7 @@ app.post("/api/persons",(request,response) => {
 
     phonebook = phonebook.concat(book);
     response.json(book);
+    morgan.token("body",request => JSON.stringify(request.body));
 })
 
 
