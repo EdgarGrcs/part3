@@ -1,8 +1,8 @@
-POST http://localhost:3001/api/persons
+POST https://part3-backend-2ck6.onrender.com/api/persons
 Content-Type: application/json
 
 {
     "id":"",
-    "name":"Jennifer Aniston",
-    "number":"12346"
+    "name":"Jennifer Anistons",
+    "number":"12346-534-34"
 }
