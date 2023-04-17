@@ -50,4 +50,3 @@ if (password && !phoneName && !phoneNumber){
 }
 
 
-

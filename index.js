@@ -1,14 +1,17 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
+const Phonebook = require("./models/phonebook");
 
 app.use(express.json());
 app.use(cors());
 app.use(express.static("build"));
 //app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-let phonebook = 
+// deprecated list of phonebook entries. No more needed due to switch to MongoDB
+/*let phonebook = 
 [
     { 
       "id": 1,
@@ -30,10 +33,12 @@ let phonebook =
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
     }
-]
+] */
 
 app.get("/api/persons",(request,response) => {
-    response.json(phonebook);
+    Phonebook.find({}).then(phone => {
+        response.json(phone)
+    })
 })
 
 app.get("/",(request,response) => {
@@ -71,8 +76,21 @@ const generateId = () => {
 
 app.post("/api/persons",(request,response) => {
     const body = request.body;
- 
-    if (!body.name){
+
+    if (body.name === undefined){
+        return response.status(400).json({error: "content missing"})
+    }
+
+    const phoneEntry = new Phonebook({
+        name: body.name,
+        number: body.number,
+    })
+    
+    phoneEntry.save().then(savedPhone => {
+        response.json(savedPhone);
+    })
+})
+  /*  if (!body.name){
         return response.status(400).json({
             error:"name is missing"
         })
@@ -93,15 +111,14 @@ app.post("/api/persons",(request,response) => {
         return response.status(400).json({
             error:"name must be unique"
         })
-    } 
+    } */ 
 
-    phonebook = phonebook.concat(book);
-    response.json(book);
+   /// phonebook = phonebook.concat(book);
     //morgan.token("body",request => JSON.stringify(request.body));
-})
 
 
-const PORT = process.env.PORT || 3001;
+
+const PORT = process.env.PORT;
 app.listen(PORT,() => {
     console.log(`Server running on port ${PORT}`);
 } )

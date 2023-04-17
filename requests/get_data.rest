@@ -2,7 +2,6 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "id": "2", 
-    "name":"Jennifer Aniston",
+    "name":"Jennifer Anistons",
     "number": "049-59234-59"
 }
