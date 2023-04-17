@@ -59,7 +59,7 @@ app.get("/",(request,response) => {
     response.send("<h1>Wazzup</h1>");
 })
 
-//3.18
+
 app.get("/info",(requests,response) => {
     response.send(`<p>Phonebook has info for ${phonebook.length} people</p>
     <p>${new Date()}</p>`);
@@ -85,20 +85,19 @@ app.delete("/api/persons/:id",(request,response, next) => {
     .catch(error => next(error))
 })
 
-//3.17
+
 app.post("/api/persons",(request,response) => {
     const body = request.body;
 
-    Phonebook.find({}).then(phone => {
-     const value = phone.some(entry => entry.name === body.name)
 
-        if (value){
-            console.log("fr fr no cap shits on the list")
-        } else {
-            console.log("brudda was meinst du aller das ischt nicht drin")
-        }
+   Phonebook.find({}).then(result => {
+    result.forEach(note => {
+        console.log(note)
     })
+    mongoose.connection.close()
+   })
 
+    
 
     if (body.name === undefined){
         return response.status(400).json({error: "content missing"})
@@ -109,9 +108,9 @@ app.post("/api/persons",(request,response) => {
         number: body.number,
     })
 
-  /*  phoneEntry.save().then(savedPhone => {
+    phoneEntry.save().then(savedPhone => {
         response.json(savedPhone);
-    }) */
+    })
 })
   
 const PORT = process.env.PORT;
