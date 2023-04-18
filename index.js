@@ -59,10 +59,12 @@ app.get("/",(request,response) => {
     response.send("<h1>Wazzup</h1>");
 })
 
-//3.18
+
 app.get("/info",(requests,response) => {
-    response.send(`<p>Phonebook has info for ${phonebook.length} people</p>
-    <p>${new Date()}</p>`);
+    Phonebook.countDocuments({}).then(count => {
+        response.send(`<p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>`).catch(error => next(error))
+    })
 })
 
 app.get("/api/persons/:id",(request,response, next) => {
@@ -85,20 +87,21 @@ app.delete("/api/persons/:id",(request,response, next) => {
     .catch(error => next(error))
 })
 
-//3.17
+app.put("/api/persons/:id", (request, response, next) => {
+    const body = request.body;
+    const phoneEntry = {
+        number: body.number,
+    }
+    
+    Phonebook.findByIdAndUpdate(request.params.id, phoneEntry ,{new: true})
+    .then(newPhoneEntry => {
+        response.json(newPhoneEntry)
+    })
+    .catch(error => next(error));
+})
+
 app.post("/api/persons",(request,response) => {
     const body = request.body;
-
-    Phonebook.find({}).then(phone => {
-     const value = phone.some(entry => entry.name === body.name)
-
-        if (value){
-            console.log("fr fr no cap shits on the list")
-        } else {
-            console.log("brudda was meinst du aller das ischt nicht drin")
-        }
-    })
-
 
     if (body.name === undefined){
         return response.status(400).json({error: "content missing"})
@@ -109,9 +112,9 @@ app.post("/api/persons",(request,response) => {
         number: body.number,
     })
 
-  /*  phoneEntry.save().then(savedPhone => {
+   phoneEntry.save().then(savedPhone => {
         response.json(savedPhone);
-    }) */
+    }) 
 })
   
 const PORT = process.env.PORT;
