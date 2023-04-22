@@ -15,6 +15,8 @@ const errorHandler = (error, request, response, next) => {
   
     if (error.name === "CastError"){
       return response.status(400).send({error:"Malformated id"})
+    } else if (error.name === "ValidationError"){
+        return response.status(400).json({error: error.message})
     }
     next(error)
   }
@@ -88,19 +90,17 @@ app.delete("/api/persons/:id",(request,response, next) => {
 })
 
 app.put("/api/persons/:id", (request, response, next) => {
-    const body = request.body;
-    const phoneEntry = {
-        number: body.number,
-    }
+    const {number} = request.body;
     
-    Phonebook.findByIdAndUpdate(request.params.id, phoneEntry ,{new: true})
+    
+    Phonebook.findByIdAndUpdate(request.params.id, {number} ,{new: true, runValidators: true, context: "query"})
     .then(newPhoneEntry => {
         response.json(newPhoneEntry)
     })
     .catch(error => next(error));
 })
 
-app.post("/api/persons",(request,response) => {
+app.post("/api/persons",(request,response, next) => {
     const body = request.body;
 
     if (body.name === undefined){
@@ -114,7 +114,8 @@ app.post("/api/persons",(request,response) => {
 
    phoneEntry.save().then(savedPhone => {
         response.json(savedPhone);
-    }) 
+    })
+    .catch(error => next(error)) 
 })
   
 const PORT = process.env.PORT;
